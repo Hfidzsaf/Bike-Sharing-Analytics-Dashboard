@@ -10,11 +10,12 @@ sns.set_theme(style='whitegrid')
 
 # 1. Menyiapkan Helper Functions
 def create_monthly_rent_df(df):
-    monthly_rent_df = df.resample(rule='M', on='dteday').agg({
+    df['dteday'] = pd.to_datetime(df['dteday'])
+    monthly_rent_df = df.set_index('dteday').resample('ME').agg({
         "cnt": "sum"
-    })
-    monthly_rent_df.index = monthly_rent_df.index.strftime('%B %Y')
-    monthly_rent_df = monthly_rent_df.reset_index()
+    }).reset_index()
+    
+    monthly_rent_df['dteday'] = monthly_rent_df['dteday'].dt.strftime('%B %Y')
     return monthly_rent_df
 
 def create_hourly_rent_df(df):
